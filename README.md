@@ -1,5 +1,7 @@
 # TypeScript version of Yatzy Refactoring Kata
 
+From Emily Bache's github, https://github.com/emilybache/Yatzy-Refactoring-Kata
+
 Make sure you have [node.js](https://nodejs.org), and [npm](https://www.npmjs.com/get-npm)
 installed. Then in this directory:
 
