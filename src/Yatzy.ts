@@ -43,7 +43,7 @@ export default class Yatzy {
     const keysArr = this.createDieKeysArr();
     const max = Math.max.apply(Math, keysArr);
 
-    return (this.dice.length > new Set(this.dice).size) ? max * 2 : 0;
+    return this.hasPairs() ? max * 2 : 0;
   }
 
   twoPairs(): number {
@@ -51,27 +51,31 @@ export default class Yatzy {
     const sumOfTwoPairs = keysArr.map(item => item * 2)
         .reduce((firstPair, secondPair) => firstPair + secondPair)
 
-    return (this.dice.length > new Set(this.dice).size) ? sumOfTwoPairs : 0;
+    return this.hasPairs() ? sumOfTwoPairs : 0;
   }
 
   threeOfAKind(): number {
     let result = this.createDiceObject();
 
-    const threeOfAKindDie = this.moreThanTwoPairs(result, 3);
+    const threeOfAKindDie = this.getDieIndex(result, 3);
 
-    return (this.dice.length > new Set(this.dice).size) ? threeOfAKindDie * 3 : 0;
+    return this.hasPairs() ? threeOfAKindDie * 3 : 0;
   }
 
   fourOfAKind(): number {
     let result = this.createDiceObject();
 
-    const fourOfAKindDie = this.moreThanTwoPairs(result, 4);
+    const fourOfAKindDie = this.getDieIndex(result, 4);
 
-    return (this.dice.length > new Set(this.dice).size) ? fourOfAKindDie * 4 : 0;
+    return this.hasPairs() ? fourOfAKindDie * 4 : 0;
   }
 
 
-  private moreThanTwoPairs(result: {}, dieIndex: number) {
+  private hasPairs() {
+    return this.dice.length > new Set(this.dice).size;
+  }
+
+  private getDieIndex(result: {}, dieIndex: number) {
     // @ts-ignore
     const fourOfAKindDie: number = Object.keys(result).find((key) =>
         // @ts-ignore
@@ -80,59 +84,23 @@ export default class Yatzy {
     return fourOfAKindDie;
   }
 
-  static smallStraight(d1: number, d2: number, d3: number, d4: number, d5: number): number {
-    var tallies;
-    tallies = [0, 0, 0, 0, 0, 0, 0];
-    tallies[d1 - 1] += 1;
-    tallies[d2 - 1] += 1;
-    tallies[d3 - 1] += 1;
-    tallies[d4 - 1] += 1;
-    tallies[d5 - 1] += 1;
-    if (tallies[0] == 1 && tallies[1] == 1 && tallies[2] == 1 && tallies[3] == 1 && tallies[4] == 1) return 15;
-    return 0;
+  smallStraight(): number {
+    const sizeOfDiceSet = new Set(this.dice).size;
+    const min = Math.min.apply(Math, this.dice);
+
+    return (sizeOfDiceSet === 5 && min === 1)? 15:0;
   }
 
-  static largeStraight(d1: number, d2: number, d3: number, d4: number, d5: number): number {
-    var tallies;
-    tallies = [0, 0, 0, 0, 0, 0, 0, 0];
-    tallies[d1 - 1] += 1;
-    tallies[d2 - 1] += 1;
-    tallies[d3 - 1] += 1;
-    tallies[d4 - 1] += 1;
-    tallies[d5 - 1] += 1;
-    if (tallies[1] == 1 && tallies[2] == 1 && tallies[3] == 1 && tallies[4] == 1 && tallies[5] == 1) return 20;
-    return 0;
+  largeStraight(): number {
+    const sizeOfDiceSet = new Set(this.dice).size;
+    const max = Math.max.apply(Math, this.dice);
+
+    return (sizeOfDiceSet === 5 && max === 6)? 20:0;
   }
 
-  static fullHouse(d1: number, d2: number, d3: number, d4: number, d5: number): number {
-    var tallies;
-    var _2 = false;
-    var i;
-    var _2_at = 0;
-    var _3 = false;
-    var _3_at = 0;
-
-    tallies = [0, 0, 0, 0, 0, 0, 0, 0];
-    tallies[d1 - 1] += 1;
-    tallies[d2 - 1] += 1;
-    tallies[d3 - 1] += 1;
-    tallies[d4 - 1] += 1;
-    tallies[d5 - 1] += 1;
-
-    for (i = 0; i != 6; i += 1)
-      if (tallies[i] == 2) {
-        _2 = true;
-        _2_at = i + 1;
-      }
-
-    for (i = 0; i != 6; i += 1)
-      if (tallies[i] == 3) {
-        _3 = true;
-        _3_at = i + 1;
-      }
-
-    if (_2 && _3) return _2_at * 2 + _3_at * 3;
-    else return 0;
+  fullHouse(): number {
+    const sum = this.threeOfAKind() + this.onePair()
+    return this.hasPairs() ? sum : 0
   }
 
   private singles(input: number): number {
