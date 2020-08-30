@@ -70,20 +70,6 @@ export default class Yatzy {
     return this.hasPairs() ? fourOfAKindDie * 4 : 0;
   }
 
-
-  private hasPairs() {
-    return this.dice.length > new Set(this.dice).size;
-  }
-
-  private getDieIndex(result: {}, dieIndex: number) {
-    // @ts-ignore
-    const fourOfAKindDie: number = Object.keys(result).find((key) =>
-        // @ts-ignore
-        (result[key] >= dieIndex) ? +key! : 0
-    );
-    return fourOfAKindDie;
-  }
-
   smallStraight(): number {
     const sizeOfDiceSet = new Set(this.dice).size;
     const min = Math.min.apply(Math, this.dice);
@@ -106,6 +92,19 @@ export default class Yatzy {
   private singles(input: number): number {
     return this.dice.filter(die => die === input)
         .reduce((prev, next) => prev + next, 0);
+  }
+
+  private hasPairs() {
+    return this.dice.length > new Set(this.dice).size;
+  }
+
+  private getDieIndex(result: {}, dieIndex: number) {
+    // @ts-ignore
+    const fourOfAKindDie: number = Object.keys(result).find((key) =>
+        // @ts-ignore
+        (result[key] >= dieIndex) ? +key! : 0
+    );
+    return fourOfAKindDie;
   }
 
   private createDiceObject() {
